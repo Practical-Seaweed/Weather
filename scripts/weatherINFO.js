@@ -12,7 +12,7 @@ let cities = [
     { name: "Dallas, TX", latitude: 32.776748073760835, longitude: -96.79858243805562 },
     { name: "Arlington, TX", latitude: 32.735711653959775, longitude: -97.10809012871582 },
     { name: "Garland, TX", latitude: 32.91262119495808, longitude: -96.63908920576453 },
-    { name: "Fort Worth", latitude: 32.75494372150879, longitude: -97.33515696793772 }
+    { name: "Fort Worth, TX", latitude: 32.75494372150879, longitude: -97.33515696793772 }
 ];
 
 function inputCitiesData() {
