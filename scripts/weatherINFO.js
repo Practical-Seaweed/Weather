@@ -1,10 +1,17 @@
-"use strict"
+"use strict";
 
 window.onload = () => {
     let citiesDropdown = document.querySelector("#citiesDropdown");
-    citiesDropdown.addEventListener("change", inputCitiesData);
+    citiesDropdown.addEventListener("change", () => {
+        if(citiesDropdown.value === ""){
+            hideTable();
+        }else {
+            getWeatherDataForLocation(citiesDropdown.value);
+        }
+        
+    });
     inputCitiesData();
-    console.log("we are in")
+    console.log("we are in");
 }
 
 let cities = [
@@ -16,11 +23,9 @@ let cities = [
 ];
 
 function inputCitiesData() {
-
     let citiesData = document.querySelector("#citiesDropdown");
 
-    console.log("we are inside inputCitiesData function")
-    // Clear the dropdown before repopulating it
+
     citiesData.innerHTML = "";
 
     let defaultOption = document.createElement("option");
@@ -30,8 +35,60 @@ function inputCitiesData() {
 
     cities.forEach(city => {
         let newOption = document.createElement("option");
-        newOption.value = city.name;
+        newOption.value = `${city.latitude},${city.longitude}`;
         newOption.textContent = city.name;
         citiesData.appendChild(newOption);
+    });
+}
+
+function getWeatherDataForLocation(location) {
+    fetch(`https://api.weather.gov/points/${location}`)
+        .then((response) => response.json())
+        .then((weatherData) => {
+            getForecastDetails(weatherData.properties.forecast);
+        })
+        .catch((error) => console.log("Nahh brother, check again for getWeatherDataForLocation" ));
+}
+
+function getForecastDetails(forecastURL) {
+    fetch(forecastURL)
+        .then((response) => response.json())
+        .then((data) => {
+            generateTableRows(data.properties.periods);
+        })
+        .catch((error) => console.log("haha nope! check again inside getForecastDetails"));
+}
+
+function hideTable(){
+    let tableOverall = document.querySelector("#tableOverall");
+    tableOverall.style.display = "none";
+}
+
+
+
+function generateTableRows(periods) {
+    let tbody = document.querySelector("#userTableInfo");
+    tbody.innerHTML = ""; 
+
+    let tableOverall = document.querySelector("#tableOverall");
+    tableOverall.style.display = "block"
+
+
+    periods.forEach(period => {
+        let row = tbody.insertRow();
+        let cell1 = row.insertCell();
+        cell1.textContent = period.name;
+
+        let cell2 = row.insertCell();
+        cell2.textContent = `${period.temperature}℉`;
+
+        let cell3 = row.insertCell();
+        cell3.textContent = `${period.windDirection} - ${period.windSpeed}`;
+
+        let cell4 = row.insertCell();
+        cell4.textContent = period.shortForecast;
+
+        let cell5 = row.insertCell();
+        cell5.textContent = period.detailedForecast;
     });
 }
